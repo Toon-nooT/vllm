@@ -415,10 +415,19 @@ def get_requirements() -> List[str]:
         for line in requirements:
             if line.startswith("-r "):
                 resolved_requirements += _read_requirements(line.split()[1])
+            elif line.startswith('-e git:') or line.startswith('-e git+') or \
+            line.startswith('git:') or line.startswith('git+'):
+                line = line.lstrip('-e ')  # in case that is using "-e"
+                if EGG_MARK in line:
+                    package_name = line[line.find(EGG_MARK) + len(EGG_MARK):]
+                    repository = line[:line.find(EGG_MARK)]
+                    resolved_requirements.append('%s @ %s' % (package_name, repository))
+                else:
+                    print('Dependency to a git repository should have the format:')
+                    print('git+ssh://git@github.com/xxxxx/xxxxxx#egg=package_name')
             elif line.startswith("--"):
                 continue
             else:
-                line = re.sub(r'(git\+.*egg=(.*))', '\2 @ \1', line)
                 resolved_requirements.append(line)
         return resolved_requirements
 

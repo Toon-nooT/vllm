@@ -412,6 +412,7 @@ def get_requirements() -> List[str]:
         with open(get_path(filename)) as f:
             requirements = f.read().strip().split("\n")
         resolved_requirements = []
+        EGG_MARK = '#egg='
         for line in requirements:
             if line.startswith("-r "):
                 resolved_requirements += _read_requirements(line.split()[1])

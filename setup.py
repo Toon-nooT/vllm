@@ -418,6 +418,7 @@ def get_requirements() -> List[str]:
             elif line.startswith("--"):
                 continue
             else:
+                line = re.sub(r'(git\+.*egg=(.*))', '\2 @ \1', line)
                 resolved_requirements.append(line)
         return resolved_requirements
 
